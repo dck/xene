@@ -54,8 +54,8 @@ export abstract class Bot<Message, User extends BaseUser> {
     this.getChat(options.chat).startDialog(options.dialog, options.user, options.options || {})
   }
 
-  stopDialog(chat: string, user: string) {
-    this.getChat(chat).stopDialog(user)
+  stopDialog(chat: string, user: User) {
+    this.getChat(chat).stopDialog(user.id)
   }
 
   abstract sendMessage(chat: string, message: Message): Promise<any>
@@ -71,5 +71,4 @@ export abstract class Bot<Message, User extends BaseUser> {
   private isCommand(message: string): boolean {
     return this.commands.some(c => c.match(message))
   }
-
 }
