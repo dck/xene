@@ -10,7 +10,6 @@ import { isPrivateChannel } from './helpers/channel-type'
 
 import IUser from './api/types/user'
 import { Message as APIMessage } from './api/types/message'
-export type Message = string | APIMessage
 
 // API Modules
 import Auth from './api/auth'
@@ -19,6 +18,10 @@ import Chat from './api/chat'
 import Users from './api/users'
 import Groups from './api/groups'
 import Channels from './api/channels'
+
+export type Message = string | APIMessage
+export type DialogType<B extends Bot<any, any>> = new (a: B, s: string) => Dialog<B>
+export type CommandType<B extends Bot<any, any>> = new (a: B, s: string) => Command<B>
 
 export default class Slackbot extends Bot<Message, IUser> {
   // Default dispatcher, used when user didn't provide
@@ -43,11 +46,11 @@ export default class Slackbot extends Bot<Message, IUser> {
     id?: string,
     botToken: string,
     appToken?: string,
-    dialogs: (typeof Dialog)[],
-    commands?: (typeof Command)[],
+    dialogs: DialogType<Slackbot>[],
+    commands?: CommandType<Slackbot>[],
     dispatcher?: Dispatcher
   }) {
-    super(options)
+    super(options as any)
     this.id = options.id || uuid.v4()
 
     this.chat = new Chat(options.botToken)
